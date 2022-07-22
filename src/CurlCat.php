@@ -30,6 +30,7 @@ class CurlCat
 
     protected bool $done = false;
     protected int $tries = 0;
+    protected array $resHeaders = [];
 
     public function __construct()
     {
@@ -59,6 +60,7 @@ class CurlCat
     {
         $this->done = false;
         $this->tries = 0;
+        $this->resHeaders = [];
     }
 
     public function method(string $method): static
@@ -272,6 +274,7 @@ class CurlCat
     {
         $this->prepareHeaders();
         $this->options[CURLOPT_RETURNTRANSFER] = true;
+        $this->options[CURLOPT_HEADERFUNCTION] = [$this, 'receiveHeader'];
 
         foreach ($this->options as $option => $value) {
             $setOk = curl_setopt($this->ch, $option, $value);
@@ -299,8 +302,32 @@ class CurlCat
         return false;
     }
 
+    protected function receiveHeader(CurlHandle $ch, string $header)
+    {
+        $len = strlen($header);
+
+        $parts = explode(':', $header, 2);
+        if (count($parts) !== 2) {
+            if (stripos($header, 'HTTP') !== false) {
+                $this->resHeaders = [];
+            }
+            return $len;
+        }
+        $name = trim($parts[0]);
+        $value = trim($parts[1]);
+        $name = strtolower($name);
+        if (isset($this->resHeaders[$name])) {
+            $this->resHeaders[$name][] = $value;
+        } else {
+            $this->resHeaders[$name] = [$value];
+        }
+        return $len;
+    }
+
     protected function do(): string
     {
+        $this->resHeaders = [];
+
         $text = curl_exec($this->ch);
         if ($text === false) {
             $message = sprintf('curl error (%d): %s', curl_errno($this->ch), curl_error($this->ch));
@@ -341,6 +368,18 @@ class CurlCat
     public function resType(): string
     {
         return $this->resInfo(CURLINFO_CONTENT_TYPE) ?? '';
+    }
+
+    public function resHeaderLine(string $name): string
+    {
+        return implode(',', $this->resHeader($name));
+    }
+
+    public function resHeader(string $name): array
+    {
+        $this->checkDone();
+        $name = strtolower($name);
+        return $this->resHeaders[$name] ?? [];
     }
 
     protected function checkDone()
