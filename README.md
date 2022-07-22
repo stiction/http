@@ -109,3 +109,37 @@ $cat->resType(); // response Content-Type
 $cat->resHeaderLine('X-Powered-By'); // response header
 $cat->resHeader('X-Powered-By'); // response header
 ```
+
+## Examples
+
+### wechat
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+use Stiction\Http\CurlCat;
+
+$cat = new CurlCat();
+$cat->url('https://api.weixin.qq.com/cgi-bin/token', [
+    'grant_type' => 'client_credential',
+    'appid' => 'foobarbaz', // appid
+    'secret' => 'foobarbaz-secret', // secret
+]);
+$cat->sslVerify();
+$res = $cat->fetchJson();
+$errCode = $res['errcode'] ?? 0;
+if ($errCode !== 0) {
+    throw new RuntimeException($res['errmsg']);
+}
+var_dump($res);
+$accessToken = $res['access_token'];
+
+$cat2 = clone $cat;
+$cat2->url('https://api.weixin.qq.com/cgi-bin/user/get', [
+    'access_token' => $accessToken,
+]);
+$res2 = $cat2->fetchJson();
+var_dump($res2);
+```
