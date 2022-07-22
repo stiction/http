@@ -20,6 +20,8 @@ use Stiction\Http\CurlCat;
 $cat = new CurlCat();
 $text = $cat->url('https://api.github.com/zen')
     ->sslVerify()
+    ->timeout(3)
+    ->try(3, 500)
     ->userAgent('curl')
     ->ignoreCode()
     ->fetch();
