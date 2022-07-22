@@ -191,6 +191,43 @@ var_dump($res);
 var_dump($cat->resHeaderLine('x-oss-request-id'));
 ```
 
+### swoole
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+use Stiction\Http\CurlCat;
+use Swoole\Http\Server;
+use Swoole\Http\Request;
+use Swoole\Http\Response;
+use Swoole\Coroutine;
+
+$port = 8080;
+echo "server :$port", PHP_EOL;
+
+Coroutine::set(['hook_flags' => SWOOLE_HOOK_ALL]);
+
+$http = new Server('0.0.0.0', $port);
+$http->on('Request', function (Request $request, Response $response) {
+    try {
+        $cat = new CurlCat();
+        $text = $cat->url('https://api.github.com/zen')
+            ->sslVerify()
+            ->timeout(3)
+            ->userAgent('curl')
+            ->ignoreCode()
+            ->fetch();
+        $response->end($text);
+    } catch (Exception $e) {
+        $response->status(500, 'Internal Server Error');
+        $response->end($e->getMessage());
+    }
+});
+$http->start();
+```
+
 ### How about a lovely dog
 
 ```php
