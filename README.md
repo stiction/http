@@ -143,3 +143,19 @@ $cat2->url('https://api.weixin.qq.com/cgi-bin/user/get', [
 $res2 = $cat2->fetchJson();
 var_dump($res2);
 ```
+
+### How about a lovely dog
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+use Stiction\Http\CurlCat;
+
+class CurlDog extends CurlCat
+{
+}
+
+$dog = new CurlDog();
+```
