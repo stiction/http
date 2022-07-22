@@ -144,6 +144,51 @@ $res2 = $cat2->fetchJson();
 var_dump($res2);
 ```
 
+### aliyun OSS
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+use Stiction\Http\CurlCat;
+
+$accessKeyId = 'foobarbaz'; //
+$accessKeySecret = 'foobarbaz-secret'; //
+$bucketName = 'foo'; //
+$endpoint = 'oss-cn-shanghai.aliyuncs.com'; //
+$verb = CurlCat::METHOD_PUT;
+$body = 'hello world';
+$contentMd5 = '';
+$contentType = 'text/plain';
+$date = date(DATE_RFC7231);
+$canonicalizedOSSHeaders = '';
+$objectName = 'test/hello.txt';
+$canonicalizedResource = "/$bucketName/$objectName";
+
+$str = $verb . "\n" .
+    $contentMd5 . "\n" .
+    $contentType . "\n" .
+    $date . "\n" .
+    $canonicalizedOSSHeaders .
+    $canonicalizedResource;
+$signature = base64_encode(hash_hmac('sha1', $str, $accessKeySecret, true));
+$authorization = "OSS $accessKeyId:$signature";
+
+$cat = new CurlCat();
+$cat->url("https://$bucketName.$endpoint/$objectName")
+    ->method($verb)
+    ->type($contentType)
+    ->sslVerify()
+    ->ignoreCode()
+    ->header('Date', $date)
+    ->header('Authorization', $authorization)
+    ->bodyRaw($body);
+$res = $cat->fetch();
+var_dump($res);
+var_dump($cat->resHeaderLine('x-oss-request-id'));
+```
+
 ### How about a lovely dog
 
 ```php
