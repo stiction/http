@@ -21,6 +21,8 @@ class CurlCat
 
     const TYPE_JSON = 'application/json';
 
+    const HEADER_CONTENT_TYPE = 'Content-Type';
+
     protected CurlHandle $ch;
 
     protected array $headers = [];
@@ -130,12 +132,20 @@ class CurlCat
 
     public function type(string $type): static
     {
-        return $this->header('Content-Type', $type);
+        return $this->header(self::HEADER_CONTENT_TYPE, $type);
     }
 
     public function body(array $fields): static
     {
+        $this->header(self::HEADER_CONTENT_TYPE, null);
         $this->options[CURLOPT_POSTFIELDS] = $fields;
+        return $this;
+    }
+
+    public function bodyUrlencoded(string $str): static
+    {
+        $this->header(self::HEADER_CONTENT_TYPE, null);
+        $this->options[CURLOPT_POSTFIELDS] = $str;
         return $this;
     }
 

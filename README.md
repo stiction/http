@@ -75,7 +75,7 @@ $cat->body([ // multipart/form-data
     'foo' => '1',
     'file' => new CurlFile(__FILE__), // upload files
 ]);
-$cat->bodyRaw('foo=1&bar=2'); // application/x-www-form-urlencoded
+$cat->bodyUrlencoded('foo=1&bar=2'); // application/x-www-form-urlencoded
 $cat->bodyRaw('hello world', 'text/plain'); // custom request body type
 $cat->bodyJson([ // request with json data
     'foo' => 1,
@@ -134,9 +134,9 @@ $cat->bodyJson(['foo' => 1]);
 // Content-Type: application/json
 $cat2 = clone $cat;
 
-// remove Content-Type header, body() method can set it properly
-$cat2->header('Content-Type', null);
+// body() and bodyUrlencoded() methods can set Content-Type properly
 $cat2->body(['bar' => '2']);
+$cat2->bodyUrlencoded('foo=1&bar=2');
 
 // remove other headers as needed
 $cat2->header('TOKEN', null);
