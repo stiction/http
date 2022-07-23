@@ -111,6 +111,8 @@ $cat->resCode(); // response HTTP code
 $cat->resType(); // response Content-Type
 $cat->resHeaderLine('X-Powered-By'); // response header
 $cat->resHeader('X-Powered-By'); // response header
+$cat->resAllHeaders(); // all response headers
+$cat->resAllHeadersLine(); // all response headers
 ```
 
 ## Examples

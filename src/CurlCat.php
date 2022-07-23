@@ -399,6 +399,18 @@ class CurlCat
         return $this->resHeaders[$name] ?? [];
     }
 
+    public function resAllHeaders(): array
+    {
+        $this->checkDone();
+        return $this->resHeaders;
+    }
+
+    public function resAllHeadersLine(): array
+    {
+        $allHeaders = $this->resAllHeaders();
+        return array_map(fn ($values) => implode(',', $values), $allHeaders);
+    }
+
     protected function checkDone()
     {
         if (! $this->done) {
