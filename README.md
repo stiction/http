@@ -67,6 +67,7 @@ $cat->url('https://api.github.com/zen?foo=1&bar=2', [
 ]);
 
 $cat->header('TOKEN', 'foo-bar-baz'); // set header
+$cat->header('TOKEN', null); // remove header
 $cat->userAgent('stiction/http'); // set User-Agent header
 $cat->type('application/xml'); // set request body Content-Type header
 
