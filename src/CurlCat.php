@@ -103,9 +103,22 @@ class CurlCat
         return $this;
     }
 
-    public function header(string $key, string $value): static
+    /**
+     * set or remove a request header
+     *
+     * no canonicalization for the header name, it should be done elsewhere. Content-Type vs. content-type, TOKEN vs. Token, etc.
+     *
+     * @param string $name header name, case sensitive, no canonicalization
+     * @param string|null $value header value, null means to remove
+     * @return static
+     */
+    public function header(string $name, ?string $value): static
     {
-        $this->headers[$key] = $value;
+        if (is_null($value)) {
+            unset($this->headers[$name]);
+        } else {
+            $this->headers[$name] = $value;
+        }
         return $this;
     }
 
