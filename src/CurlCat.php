@@ -4,6 +4,7 @@ namespace Stiction\Http;
 
 use Exception;
 use LogicException;
+use DomainException;
 use RuntimeException;
 use CurlHandle;
 
@@ -204,6 +205,9 @@ class CurlCat
      */
     public function try(int $times, int $interval): static
     {
+        if ($times < 1) {
+            throw new DomainException("invalid try times $times");
+        }
         $this->tryTimes = $times;
         $this->tryInterval = $interval;
         return $this;
