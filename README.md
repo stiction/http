@@ -114,6 +114,31 @@ $cat->resHeader('X-Powered-By'); // response header
 
 ## Examples
 
+### headers also cloned
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+use Stiction\Http\CurlCat;
+
+$cat = new CurlCat();
+$cat->header('TOKEN', 'abc-def');
+$cat->bodyJson(['foo' => 1]);
+
+// TOKEN: abc-def
+// Content-Type: application/json
+$cat2 = clone $cat;
+
+// remove Content-Type header, body() method can set it properly
+$cat2->header('Content-Type', null);
+$cat2->body(['bar' => '2']);
+
+// remove other headers as needed
+$cat2->header('TOKEN', null);
+```
+
 ### wechat
 
 ```php
