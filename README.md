@@ -208,15 +208,46 @@ $authorization = "OSS $accessKeyId:$signature";
 $cat = new CurlCat();
 $cat->url("https://$bucketName.$endpoint/$objectName")
     ->method($verb)
-    ->type($contentType)
     ->sslVerify()
     ->ignoreCode()
     ->header('Date', $date)
     ->header('Authorization', $authorization)
-    ->bodyRaw($body);
+    ->bodyRaw($body, $contentType);
 $res = $cat->fetch();
 var_dump($res);
 var_dump($cat->resHeaderLine('x-oss-request-id'));
+
+// PutObjectTagging
+$body = <<<EOT
+<Tagging>
+  <TagSet>
+    <Tag>
+      <Key>foo</Key>
+      <Value>42</Value>
+    </Tag>
+  </TagSet>
+</Tagging>
+EOT;
+$contentType = 'application/xml';
+$date = date(DATE_RFC7231);
+$canonicalizedResource = "/$bucketName/$objectName?tagging";
+$str = $verb . "\n" .
+    $contentMd5 . "\n" .
+    $contentType . "\n" .
+    $date . "\n" .
+    $canonicalizedOSSHeaders .
+    $canonicalizedResource;
+$signature = base64_encode(hash_hmac('sha1', $str, $accessKeySecret, true));
+$authorization = "OSS $accessKeyId:$signature";
+
+$cat2 = clone $cat;
+$cat2->url("https://$bucketName.$endpoint/$objectName?tagging")
+    ->header('Date', $date)
+    ->header('Authorization', $authorization)
+    ->bodyRaw($body, $contentType);
+$res2 = $cat2->fetch();
+var_dump($res2);
+var_dump($cat2->resHeaderLine('x-oss-request-id'));
 ```
 
 ### swoole
