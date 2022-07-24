@@ -290,6 +290,7 @@ class CurlCat
     protected function prepareHeaders()
     {
         if (count($this->headers) === 0) {
+            unset($this->options[CURLOPT_HTTPHEADER]);
             return;
         }
 
