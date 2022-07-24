@@ -34,6 +34,7 @@ class CurlCat
     protected bool $done = false;
     protected int $tries = 0;
     protected array $resHeaders = [];
+    protected array $resExps = [];
 
     public function __construct()
     {
@@ -64,6 +65,7 @@ class CurlCat
         $this->done = false;
         $this->tries = 0;
         $this->resHeaders = [];
+        $this->resExps = [];
     }
 
     public function method(string $method): static
@@ -237,6 +239,7 @@ class CurlCat
             try {
                 return $this->do();
             } catch (Exception $e) {
+                $this->resExps[] = $e;
                 if ($this->tries === $this->tryTimes) {
                     throw $e;
                 }
@@ -419,6 +422,17 @@ class CurlCat
     {
         $allHeaders = $this->resAllHeaders();
         return array_map(fn ($values) => implode(',', $values), $allHeaders);
+    }
+
+    /**
+     * try exceptions
+     *
+     * @return array
+     */
+    public function resExceptions(): array
+    {
+        $this->checkDone();
+        return $this->resExps;
     }
 
     protected function checkDone()

@@ -113,6 +113,7 @@ $cat->resHeaderLine('X-Powered-By'); // response header
 $cat->resHeader('X-Powered-By'); // response header
 $cat->resAllHeaders(); // all response headers
 $cat->resAllHeadersLine(); // all response headers
+$cat->resExceptions(); // exceptions thrown including failed tries
 ```
 
 ## Examples
