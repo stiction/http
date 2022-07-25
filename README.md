@@ -22,7 +22,8 @@ $text = $cat->url('https://api.github.com/zen')
     ->sslVerify()
     ->timeout(3)
     ->try(3, 500)
-    ->userAgent('curl')
+    ->encoding()
+    ->userAgent('stiction/http')
     ->ignoreCode()
     ->fetch();
 var_dump($text);
@@ -69,6 +70,7 @@ $cat->url('https://api.github.com/zen?foo=1&bar=2', [
 $cat->header('TOKEN', 'foo-bar-baz'); // set header
 $cat->header('TOKEN', null); // remove header
 $cat->userAgent('stiction/http'); // set User-Agent header
+$cat->encoding(); // Accept-Encoding Content-Encoding
 $cat->type('application/xml'); // set request body Content-Type header
 
 $cat->body([ // multipart/form-data

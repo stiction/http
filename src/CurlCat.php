@@ -132,6 +132,12 @@ class CurlCat
         return $this->header('User-Agent', $agent);
     }
 
+    public function encoding(string $encoding = ''): static
+    {
+        $this->options[CURLOPT_ENCODING] = $encoding;
+        return $this;
+    }
+
     public function type(string $type): static
     {
         return $this->header(self::HEADER_CONTENT_TYPE, $type);
