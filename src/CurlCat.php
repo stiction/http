@@ -243,6 +243,15 @@ class CurlCat
         return $this;
     }
 
+    public function verbose(bool $verbose = true): static
+    {
+        if ($verbose) {
+            return $this->setopt(CURLOPT_VERBOSE, true);
+        } else {
+            return $this->unsetopt(CURLOPT_VERBOSE);
+        }
+    }
+
     public function fetch(): string
     {
         if ($this->done) {

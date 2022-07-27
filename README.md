@@ -104,6 +104,9 @@ $cat->ignoreCode(false); // throws if the response HTTP code is not 2xx
 
 $cat->try(3, 500); // try at most 3 times with a 500 milliseconds interval
 
+$cat->verbose(); // output verbose information
+$cat->verbose(false); // no verbose information
+
 $cat->fetch(); // fetch the response as a string
 $cat->fetchJson(); // fetch the response as a json containing an object or an array
 $cat->fetchJson(true); // check response Content-Type
