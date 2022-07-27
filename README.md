@@ -97,6 +97,7 @@ $cat->sslVerify('/path/to/cacert.pem'); // verify ssl/tls with the specified cac
 
 $cat->followLocation(); // allow HTTP 3xx redirection
 $cat->followLocation(false); // not allow HTTP 3xx redirection
+$cat->maxRedirects(3); // allows 3 redirects
 
 $cat->ignoreCode(); // return the response no matter what HTTP code the server sends
 $cat->ignoreCode(false); // throws if the response HTTP code is not 2xx

@@ -212,6 +212,12 @@ class CurlCat
         return $this;
     }
 
+    public function maxRedirects(int $max): static
+    {
+        $this->options[CURLOPT_MAXREDIRS] = $max;
+        return $this;
+    }
+
     public function ignoreCode(bool $ignore = true): static
     {
         $this->ignoreHttpCode = $ignore;
