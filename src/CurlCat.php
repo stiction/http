@@ -172,9 +172,15 @@ class CurlCat
         return $this->bodyRaw($str, self::TYPE_JSON);
     }
 
-    public function setopt(int $option, $value): static
+    public function setopt(int $option, mixed $value): static
     {
         $this->options[$option] = $value;
+        return $this;
+    }
+
+    public function unsetopt(int $option): static
+    {
+        unset($this->options[$option]);
         return $this;
     }
 

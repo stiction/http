@@ -87,6 +87,7 @@ $cat->bodyJson([ // request with json data
 $cat->bodyRaw('3.14', 'application/json'); // request with json data
 
 $cat->setopt(CURLOPT_VERBOSE, true); // curl options
+$cat->unsetopt(CURLOPT_VERBOSE); // unset curl options
 
 $cat->timeout(3); // timeout 3 seconds
 $cat->timeoutMs(500); // timeout 500 milliseconds
