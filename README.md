@@ -92,6 +92,9 @@ $cat->unsetopt(CURLOPT_VERBOSE); // unset curl options
 $cat->timeout(3); // timeout 3 seconds
 $cat->timeoutMs(500); // timeout 500 milliseconds
 
+$cat->maxSize(1024 * 1024); // limit response size
+$cat->maxSize(-1); // no limit on response size
+
 $cat->sslVerify(); // verify ssl/tls with builtin cacert.pem
 $cat->sslVerify('/path/to/cacert.pem'); // verify ssl/tls with the specified cacert.pem
 

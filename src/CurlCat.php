@@ -30,6 +30,7 @@ class CurlCat
     protected bool $ignoreHttpCode = false;
     protected int $tryTimes = 1;
     protected int $tryInterval = 0;
+    protected int $maxFileSize = -1;
 
     protected bool $done = false;
     protected int $tries = 0;
@@ -193,6 +194,12 @@ class CurlCat
     public function timeoutMs(int $milliseconds): static
     {
         $this->options[CURLOPT_TIMEOUT_MS] = $milliseconds;
+        return $this;
+    }
+
+    public function maxSize(int $size): static
+    {
+        $this->maxFileSize = ($size >= 0) ? $size : -1;
         return $this;
     }
 
@@ -386,11 +393,25 @@ class CurlCat
     {
         $this->resHeaders = [];
 
-        $text = curl_exec($this->ch);
-        if ($text === false) {
+        $limitSize = $this->maxFileSize >= 0;
+        $buffer = '';
+        if ($limitSize) {
+            curl_setopt($this->ch, CURLOPT_WRITEFUNCTION, function (CurlHandle $ch, string $str) use(&$buffer) {
+                $len = strlen($str);
+                if ($len <= $this->maxFileSize - strlen($buffer)) {
+                    $buffer .= $str;
+                    return $len;
+                }
+                return 0;
+            });
+        }
+
+        $ret = curl_exec($this->ch);
+        if ($ret === false) {
             $message = sprintf('curl error (%d): %s', curl_errno($this->ch), curl_error($this->ch));
             throw new RuntimeException($message);
         }
+        $text = $limitSize ? $buffer : $ret;
 
         if (! $this->ignoreHttpCode) {
             $code = $this->resCode();
