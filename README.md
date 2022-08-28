@@ -261,6 +261,47 @@ var_dump($res2);
 var_dump($cat2->resHeaderLine('x-oss-request-id'));
 ```
 
+### Amazon S3
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+use Stiction\Http\CurlCat;
+
+$awsAccessKeyId = 'xxx';
+$awsAccessSecret = 'xxx';
+$bucket = 'xxx';
+$region = 'xxx';
+
+$key = 'foo/bar/baz.txt';
+$date = date(DATE_RFC7231);
+$httpVerb = 'PUT';
+$content = 'hello';
+$contentType = 'text/plain';
+$contentMd5 = '';
+$url = "https://$bucket.s3.$region.amazonaws.com/$key";
+
+$canonicalizedAmzHeaders = '';
+$canonicalizedResource = "/$bucket/$key";
+$strToSign = $httpVerb . "\n" . $contentMd5 . "\n" . $contentType . "\n" . $date . "\n" . $canonicalizedAmzHeaders . $canonicalizedResource;
+$signature = base64_encode(hash_hmac('sha1', $strToSign, $awsAccessSecret, true));
+$authorization = "AWS $awsAccessKeyId:$signature";
+
+$cat = new CurlCat();
+$cat->method($httpVerb)
+    ->url($url)
+    ->sslVerify()
+    ->ignoreCode()
+    ->header('Date', $date)
+    ->header('Authorization', $authorization)
+    ->type($contentType)
+    ->bodyRaw($content);
+$cat->fetch();
+var_dump($cat->resHeaderLine('x-amz-request-id'));
+```
+
 ### swoole
 
 ```php
